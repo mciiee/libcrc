@@ -15,8 +15,9 @@ enum TokenType {
     TOKENTYPE_PAREN_OPEN, // (
     TOKENTYPE_PAREN_CLOSE, // )
 
-    TOKENTYPE_RANGE_OPEN, // 
-    TOKENTYPE_RANGE_CLOSE, // 
+    TOKENTYPE_RANGE_START, // 
+    TOKENTYPE_RANGE_END, // 
+    
 
 };
 
@@ -32,5 +33,8 @@ typedef struct DynamicTokenArray {
 } DynamicTokenArray;
 
 DynamicTokenArray *DynamicTokenArray_new(size_t initialCapacity);
-
+void DynamicTokenArray_free(DynamicTokenArray *const array);
+void DynamicTokenArray_append(DynamicTokenArray * const array, const Token * const token);
+Token *DynamicTokenArray_last(const DynamicTokenArray * const array);
+Token *DynamicTokenArray_pop(DynamicTokenArray * const array);
 #endif
