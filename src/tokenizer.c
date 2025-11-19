@@ -51,7 +51,53 @@ Token *DynamicTokenArray_pop(DynamicTokenArray * const array) {
 }
 
 
-bool isSubject(const char *str) {
+static const char * TokenTypeToStr(enum TokenType type){
+    switch (type) {
+        case TOKENTYPE_UNKNOWN: return "TOKENTYPE_UNKNOWN";
+        case TOKENTYPE_COURSE_SUBJECT: return "TOKENTYPE_COURSE_SUBJECT";
+        case TOKENTYPE_COURSE_NUMBER: return "TOKENTYPE_COURSE_NUMBER";
+        case TOKENTYPE_CONJUNCTION: return "TOKENTYPE_CONJUNCTION";
+        case TOKENTYPE_DISJUNCTION: return "TOKENTYPE_DISJUNCTION";
+        case TOKENTYPE_ADJOIN: return "TOKENTYPE_ADJOIN";
+        case TOKENTYPE_PAREN_OPEN: return "TOKENTYPE_PAREN_OPEN";
+        case TOKENTYPE_PAREN_CLOSE: return "TOKENTYPE_PAREN_CLOSE";
+        case TOKENTYPE_RANGE_START: return "TOKENTYPE_RANGE_START";
+        case TOKENTYPE_RANGE_END: return "TOKENTYPE_RANGE_END";
+        default: return nullptr;
+    }
+}
+
+static const char * TokenFlagsToStr(enum TokenFlags flags) {
+    switch (flags) {
+        case TOKEN_NO_FLAGS: return "TOKEN_NO_FLAGS";
+        case TOKEN_DYNAMICALLY_ALLOCATED: return "TOKEN_DYNAMICALLY_ALLOCATED";
+        default: return 0;
+    }
+}
+
+static void Token_prettyPrint(const Token * const token) {
+    puts("Token {");
+    printf("  type: %s", TokenTypeToStr(token->type));
+    printf("  flags: %s", TokenFlagsToStr(token->flags));
+    puts("}");
+}
+
+void DynamicTokenArray_prettyPrint(const DynamicTokenArray * const array) {
+    puts("DynamicTokenArray {");
+    printf("  capacity: %u\n", (unsigned int)array->capacity);
+    printf("  occupied: %u\n", (unsigned int)array->occupied);
+    puts("}");
+    for (size_t i = 0; i < array->occupied; i++) {
+        Token_prettyPrint(&array->data[i]);
+    }
+}
+
+bool isCourseRangeStart(const char *str) {
+    constexpr const char SUBJECT[] = "SUBJECT";
+    return strncmp(str, SUBJECT, sizeof(SUBJECT)/sizeof(SUBJECT[0]));
+}
+
+bool isCourseSubject(const char *str) {
     for (size_t i = 0; str[i] != '\0'; i++) {
         if (!isupper(str[i])) {
             return false;
@@ -60,16 +106,34 @@ bool isSubject(const char *str) {
     return true;
 }
 
-DynamicTokenArray *tokenize_string(char *stream) {
-    auto array = DynamicTokenArray_new(TOKEN_ARRAY_INITIAL_CAPACITY);
-    char *nextToken;
-    char *token = strtok_rs(stream, " ", &nextToken);
-    for (size_t i = 0; token != nullptr && i < TOKENIZER_LOOP_LIMIT ; i++) {
-        if (isSubject(token)) {
-            
-        }
-        token = strtok_rs(nullptr, " ", &nextToken);
+bool isQuotedCourseSubject(const char *str) {
+    if(str[0] != '"') {
+        return false;
     }
+    size_t i = 0;
+    for (; str[i] != '\0' && str[i] != '"'; i++) {
+        if (!isupper(str[i])) {
+            return false;
+        }
+    }
+    return str[i] == '"';
+}
+
+bool isCourseNumber(const char *str) {
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (!isdigit(str[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+char *unquoteQuotedCourseSubject(const char *str) {
+    char *courseStr = strdup(&str[1]);
+    size_t len = strlen(courseStr);
+    courseStr[len-1] = '\0';
+    return courseStr;
+}
 
     return array;
 }
