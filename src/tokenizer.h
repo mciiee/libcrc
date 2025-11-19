@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#include "error.h"
 
 enum TokenType: uint32_t {
     TOKENTYPE_UNKNOWN = 0,

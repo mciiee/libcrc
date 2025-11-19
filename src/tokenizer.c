@@ -135,5 +135,68 @@ char *unquoteQuotedCourseSubject(const char *str) {
     return courseStr;
 }
 
+DynamicTokenArray * tokenize_string(char *stream) {
+    auto array = DynamicTokenArray_new(TOKEN_ARRAY_INITIAL_CAPACITY);
+    char *nextToken = nullptr;
+    char *tokenStr = strtok_rs(stream, " \t\n", &nextToken);
+    Token token = {0};
+    for (size_t i = 0; tokenStr != nullptr; i++) {
+        (void)i;
+        if (tokenStr == nullptr) {
+            DynamicTokenArray_free(array);
+            return nullptr;
+        }
+        else if(STR_EQUALS(tokenStr, "/")) {
+            token.type = TOKENTYPE_ADJOIN;
+            token.flags = TOKEN_NO_FLAGS;
+            token.data = "/";
+            DynamicTokenArray_append(array, &token);
+        }
+        else if (STR_EQUALS(tokenStr, "AND")) {
+            token.type = TOKENTYPE_CONJUNCTION;
+            token.flags = TOKEN_NO_FLAGS;
+            token.data = "AND";
+            DynamicTokenArray_append(array, &token);
+        }
+        else if (STR_EQUALS(tokenStr, "OR")) {
+            token.type = TOKENTYPE_DISJUNCTION;
+            token.flags = TOKEN_NO_FLAGS;
+            token.data = "AND";
+            DynamicTokenArray_append(array, &token);
+        }
+        else if (isCourseNumber(tokenStr)) {
+            token.type = TOKENTYPE_DISJUNCTION;
+            token.flags = TOKEN_DYNAMICALLY_ALLOCATED;
+            token.data = strdup(tokenStr);
+            DynamicTokenArray_append(array, &token);
+        }
+        else if (isQuotedCourseSubject(tokenStr)) {
+            token.type = TOKENTYPE_COURSE_SUBJECT;
+            token.flags = TOKEN_DYNAMICALLY_ALLOCATED;
+            token.data = unquoteQuotedCourseSubject(tokenStr);
+            DynamicTokenArray_append(array, &token);
+        }
+        else if (isCourseSubject(tokenStr)){
+            token.type = TOKENTYPE_COURSE_SUBJECT;
+            token.flags = TOKEN_DYNAMICALLY_ALLOCATED;
+            token.data = strdup(tokenStr);
+            DynamicTokenArray_append(array, &token);
+        }
+        else if (isCourseRangeStart(tokenStr)) {
+            token.type = TOKENTYPE_RANGE_START;
+            token.flags = TOKEN_NO_FLAGS;
+            token.data = "";
+            DynamicTokenArray_append(array, &token);
+        }
+        else {
+            token.type = TOKENTYPE_COURSE_SUBJECT;
+            token.flags = TOKEN_DYNAMICALLY_ALLOCATED;
+            token.data = strdup(tokenStr);
+            DynamicTokenArray_append(array, &token);
+        }
+            
+        tokenStr = strtok_rs(nullptr, " ", &nextToken);
+    }
     return array;
 }
+
