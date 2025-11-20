@@ -3,7 +3,7 @@ CC=clang
 BASE_CFLAGS=-std=c23 -Wall -Werror -Wpedantic -I$(SRC_DIR) -D_POSIX_C_SOURCE=200809L
 
 ifneq (DEBUG,)
-CFLAGS=$(BASE_CFLAGS) $(ACFLAGS) -g3  -fno-omit-frame-pointer 
+CFLAGS=$(BASE_CFLAGS) $(ACFLAGS) -g3
 else
 CFLAGS=$(BASE_CFLAGS) $(ACFLAGS)
 endif
