@@ -175,7 +175,7 @@ DynamicTokenArray * tokenize_string(char *stream) {
             DynamicTokenArray_append(array, &token);
         }
         else if (isCourseNumber(tokenStr)) {
-            token.type = TOKENTYPE_DISJUNCTION;
+            token.type = TOKENTYPE_COURSE_NUMBER;
             token.flags = TOKEN_DYNAMICALLY_ALLOCATED;
             token.data = strdup(tokenStr);
             DynamicTokenArray_append(array, &token);
@@ -199,7 +199,7 @@ DynamicTokenArray * tokenize_string(char *stream) {
             DynamicTokenArray_append(array, &token);
         }
         else {
-            token.type = TOKENTYPE_COURSE_SUBJECT;
+            token.type = TOKENTYPE_UNKNOWN;
             token.flags = TOKEN_DYNAMICALLY_ALLOCATED;
             token.data = strdup(tokenStr);
             DynamicTokenArray_append(array, &token);
