@@ -24,6 +24,11 @@ DynamicTokenArray *DynamicTokenArray_new(size_t initialCapacity) {
 }
 
 void DynamicTokenArray_free(DynamicTokenArray *const array) {
+    for (size_t i = 0; i < array->occupied; i++) {
+        if (array->data[i].flags & TOKEN_DYNAMICALLY_ALLOCATED) {
+            free(array->data[i].data);
+        }
+    }
     free(array->data);
     free(array);
 }
@@ -35,6 +40,7 @@ void DynamicTokenArray_append(DynamicTokenArray * const array, const Token * con
         array->data = realloc(array->data,  sizeof(Token[array->capacity]));
     }
     array->data[array->occupied] = *token;
+    array->occupied++;
 }
 
 Token *DynamicTokenArray_last(const DynamicTokenArray * const array) {
@@ -77,8 +83,9 @@ static const char * TokenFlagsToStr(enum TokenFlags flags) {
 
 static void Token_prettyPrint(const Token * const token) {
     puts("Token {");
-    printf("  type: %s", TokenTypeToStr(token->type));
-    printf("  flags: %s", TokenFlagsToStr(token->flags));
+    printf("  type: %s\n", TokenTypeToStr(token->type));
+    printf("  flags: %s\n", TokenFlagsToStr(token->flags));
+    printf("  data: \"%s\"\n", token->data);
     puts("}");
 }
 
@@ -94,7 +101,7 @@ void DynamicTokenArray_prettyPrint(const DynamicTokenArray * const array) {
 
 bool isCourseRangeStart(const char *str) {
     constexpr const char SUBJECT[] = "SUBJECT";
-    return strncmp(str, SUBJECT, sizeof(SUBJECT)/sizeof(SUBJECT[0]));
+    return strncmp(str, SUBJECT, sizeof(SUBJECT)/sizeof(SUBJECT[0])) == 0;
 }
 
 bool isCourseSubject(const char *str) {
@@ -121,7 +128,10 @@ bool isQuotedCourseSubject(const char *str) {
 
 bool isCourseNumber(const char *str) {
     for (size_t i = 0; str[i] != '\0'; i++) {
-        if (!isdigit(str[i])) {
+        if (!isdigit(str[i]) && i <= 3) {
+            return false;
+        }
+        else if (!isalnum(str[i])) {
             return false;
         }
     }
