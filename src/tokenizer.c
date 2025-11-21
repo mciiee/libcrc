@@ -145,6 +145,43 @@ char *unquoteQuotedCourseSubject(const char *str) {
     return courseStr;
 }
 
+constexpr Token TOKEN_CONJUNCTION = {
+    .type = TOKENTYPE_CONJUNCTION,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+
+constexpr Token TOKEN_DISJUNCTION = {
+    .type = TOKENTYPE_DISJUNCTION,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+constexpr Token TOKEN_ADJOIN = {
+    .type = TOKENTYPE_ADJOIN,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+constexpr Token TOKEN_PAREN_OPEN = {
+    .type = TOKENTYPE_PAREN_OPEN,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+constexpr Token TOKEN_PAREN_CLOSE = {
+    .type = TOKENTYPE_PAREN_CLOSE,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+constexpr Token TOKEN_RANGE_START = {
+    .type = TOKENTYPE_RANGE_START,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr
+};
+
 DynamicTokenArray * tokenize_string(char *stream) {
     auto array = DynamicTokenArray_new(TOKEN_ARRAY_INITIAL_CAPACITY);
     char *nextToken = nullptr;
@@ -157,22 +194,28 @@ DynamicTokenArray * tokenize_string(char *stream) {
             return nullptr;
         }
         else if(STR_EQUALS(tokenStr, "/")) {
-            token.type = TOKENTYPE_ADJOIN;
-            token.flags = TOKEN_NO_FLAGS;
-            token.data = "/";
-            DynamicTokenArray_append(array, &token);
+            //token.type = TOKENTYPE_ADJOIN;
+            //token.flags = TOKEN_NO_FLAGS;
+            //token.data = "/";
+            DynamicTokenArray_append(array, &TOKEN_ADJOIN);
         }
         else if (STR_EQUALS(tokenStr, "AND")) {
-            token.type = TOKENTYPE_CONJUNCTION;
-            token.flags = TOKEN_NO_FLAGS;
-            token.data = "AND";
-            DynamicTokenArray_append(array, &token);
+            DynamicTokenArray_append(array, &TOKEN_CONJUNCTION);
         }
         else if (STR_EQUALS(tokenStr, "OR")) {
-            token.type = TOKENTYPE_DISJUNCTION;
-            token.flags = TOKEN_NO_FLAGS;
-            token.data = "AND";
-            DynamicTokenArray_append(array, &token);
+            DynamicTokenArray_append(array, &TOKEN_DISJUNCTION);
+        }
+        else if (STR_EQUALS(tokenStr, ")")) {
+            //token.type = TOKENTYPE_PAREN_OPEN;
+            //token.flags = TOKEN_NO_FLAGS;
+            //token.data = ")";
+            DynamicTokenArray_append(array, &TOKEN_PAREN_OPEN);
+        }
+        else if (STR_EQUALS(tokenStr, ")")) {
+            //token.type = TOKENTYPE_PAREN_OPEN;
+            //token.flags = TOKEN_NO_FLAGS;
+            //token.data = ")";
+            DynamicTokenArray_append(array, &TOKEN_PAREN_CLOSE);
         }
         else if (isCourseNumber(tokenStr)) {
             token.type = TOKENTYPE_COURSE_NUMBER;
@@ -193,10 +236,10 @@ DynamicTokenArray * tokenize_string(char *stream) {
             DynamicTokenArray_append(array, &token);
         }
         else if (isCourseRangeStart(tokenStr)) {
-            token.type = TOKENTYPE_RANGE_START;
-            token.flags = TOKEN_NO_FLAGS;
-            token.data = "";
-            DynamicTokenArray_append(array, &token);
+            //token.type = TOKENTYPE_RANGE_START;
+            //token.flags = TOKEN_NO_FLAGS;
+            //token.data = "";
+            DynamicTokenArray_append(array, &TOKEN_RANGE_START);
         }
         else {
             token.type = TOKENTYPE_UNKNOWN;
