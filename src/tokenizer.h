@@ -37,6 +37,42 @@ typedef struct Token {
 } Token;
 
 
+constexpr Token TOKEN_CONJUNCTION = {
+    .type = TOKENTYPE_CONJUNCTION,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+
+constexpr Token TOKEN_DISJUNCTION = {
+    .type = TOKENTYPE_DISJUNCTION,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+constexpr Token TOKEN_ADJOIN = {
+    .type = TOKENTYPE_ADJOIN,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+constexpr Token TOKEN_PAREN_OPEN = {
+    .type = TOKENTYPE_PAREN_OPEN,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+constexpr Token TOKEN_PAREN_CLOSE = {
+    .type = TOKENTYPE_PAREN_CLOSE,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr,
+};
+
+constexpr Token TOKEN_RANGE_START = {
+    .type = TOKENTYPE_RANGE_START,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr
+};
 
 typedef struct DynamicTokenArray {
     size_t capacity;
