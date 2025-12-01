@@ -1,14 +1,14 @@
-CC=clang
+CC=gcc
 
 BASE_CFLAGS=-std=c23 -Wall -Werror -Wpedantic -I$(SRC_DIR) -D_POSIX_C_SOURCE=200809L
 
-ifneq (DEBUG,)
+ifneq ($(DEBUG),)
 CFLAGS=$(BASE_CFLAGS) $(ACFLAGS) -g3
 else
 CFLAGS=$(BASE_CFLAGS) $(ACFLAGS)
 endif
 
-ifneq (DEBUG,)
+ifneq ($(ASAN),)
 FINAL_CFLAGS=$(CFLAGS) -fsanitize=address
 else
 FINAL_CFLAGS=$(CFLAGS)
@@ -30,9 +30,12 @@ $(BUILD_DIR)/tokenizer.o: $(SRC_DIR)/tokenizer.c $(SRC_DIR)/tokenizer.h
 $(BUILD_DIR)/utils.o: $(SRC_DIR)/utils.c $(SRC_DIR)/utils.h
 	$(COMPILE) -c $< -o $@
 
+$(BUILD_DIR)/deque.o: $(SRC_DIR)/deque.c $(SRC_DIR)/deque.h
+	$(COMPILE) -c $< -o $@
+
 $(BUILD_DIR)/test.o: $(TEST_DIR)/test.c 
 	$(COMPILE) -c $< -o $@
 
-$(BUILD_DIR)/test: $(BUILD_DIR)/test.o $(BUILD_DIR)/utils.o $(BUILD_DIR)/tokenizer.o
+$(BUILD_DIR)/test: $(BUILD_DIR)/test.o $(BUILD_DIR)/utils.o $(BUILD_DIR)/tokenizer.o $(BUILD_DIR)/deque.o
 	$(CC) $(FINAL_CFLAGS) $^ -o $@
 
