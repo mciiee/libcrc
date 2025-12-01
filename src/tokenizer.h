@@ -23,6 +23,8 @@ enum TokenType: uint32_t {
     TOKENTYPE_RANGE_START = 0x10, // 
     TOKENTYPE_RANGE_END = 0x11, // 
     
+    TOKENTYPE_WHITESPACE = 0x1A,
+
 };
 
 enum TokenFlags: uint32_t {
@@ -70,6 +72,12 @@ constexpr Token TOKEN_PAREN_CLOSE = {
 
 constexpr Token TOKEN_RANGE_START = {
     .type = TOKENTYPE_RANGE_START,
+    .flags = TOKEN_NO_FLAGS,
+    .data = nullptr
+};
+
+constexpr Token TOKEN_WHITESPACE = {
+    .type = TOKENTYPE_WHITESPACE,
     .flags = TOKEN_NO_FLAGS,
     .data = nullptr
 };
